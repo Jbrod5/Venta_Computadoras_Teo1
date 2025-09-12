@@ -69,8 +69,12 @@ CREATE TABLE pedido(
     id_pedido INTEGER AUTO_INCREMENT PRIMARY KEY,
 
     id_usuario_pedido INTEGER REFERENCES usuario(id_usuario), -- id del usuario que realizó el pedido, puede ser un cliente o un trabajador que realice el pedido por un cliente en una tienda fisica 
-    id_ensamble REFERENCES ensamble(id_ensamble) NOT NULL,
 
+);
+
+CREATE TABLE pedido_detalle( -- un pedido puede tener uno o más ensambles
+    id_pedido INTEGER REFERENCES pedido(id_pedido) NOT NULl,
+    id_ensable REFERENCES ensamble(id_ensamble) NOT NULl
 );
 
 CREATE TABLE venta(

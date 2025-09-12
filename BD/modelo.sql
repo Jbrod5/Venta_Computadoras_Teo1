@@ -21,6 +21,7 @@ CREATE TABLE componente(
     descripcion VARCHAR (200), 
     capacidad INTEGER, -- Esto puede ser cantidad de GB, velocidad, nucleos, vatios, etc :3
     marca VARCHAR(100),
+    modelo VARCHAR(100),
 
     precio DECIMAL NOT NULL, 
     cantidad_stock INTEGER NOT NULL
@@ -64,3 +65,21 @@ CREATE TABLE componente_ensamble(
 
 
 -- - - - - - - - - - - - - - - - - - - - - - - - - - - REGISTRO DE VENTAS - - - - - - - - - - - - - - - - - - - - - - - - - -
+CREATE TABLE pedido(
+    id_pedido INTEGER AUTO_INCREMENT PRIMARY KEY,
+
+    id_usuario_pedido INTEGER REFERENCES usuario(id_usuario), -- id del usuario que realizó el pedido, puede ser un cliente o un trabajador que realice el pedido por un cliente en una tienda fisica 
+    id_ensamble REFERENCES ensamble(id_ensamble) NOT NULL,
+
+);
+
+CREATE TABLE venta(
+    id_venta INTEGER PRIMARY KEY AUTO_INCREMENT,
+    id_pedido REFERENCES pedido(id_pedido) NOT NULL,
+    fecha DATE NOT NUTLL,
+
+    nombre_cliente VARCHAR(100) NOT NULL, -- El pedido pudo haber sido hecho por un tabajador, en ese caso pedir el nombre 
+    nit_cliente INTEGER NULL,
+    usuario_ensamblador REFERENCES usuario(id_usuario), -- trabajador que ensambló la pc :3
+    monto DECIMAL NOT NULL -- calculo del total de la compra
+);

@@ -2,19 +2,17 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Login venta de computadoras</title>
+    <title>Registro de Cliente</title>
     @vite('resources/js/app.js') {{-- Aquí se carga Vue con Vite --}}
     
-    <!-- Importando bootstrapp -->
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}">
     <!-- Bootstrap JS -->
     <script src="{{ asset('js/bootstrap.bundle.min.js') }}"></script>
 
-
     <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 <body>
-    <div id="app" data-component="login"></div>
+    <div id="app" data-component="register-clients"></div>
 </body>
 </html>

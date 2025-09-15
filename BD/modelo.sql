@@ -13,6 +13,7 @@ INSERT INTO tipo_componente(tipo_componente) VALUES('Fuente de poder');
 INSERT INTO tipo_componente(tipo_componente) VALUES('Gabinete');
 INSERT INTO tipo_componente(tipo_componente) VALUES('Motherboard');
 
+-- Inventario
 CREATE TABLE componente(
     id_componente INTEGER PRIMARY KEY, 
     tipo_componente REFERENCES tipo_componente(id_tipo_componente),
@@ -26,6 +27,28 @@ CREATE TABLE componente(
     precio DECIMAL NOT NULL, 
     cantidad_stock INTEGER NOT NULL
 );
+
+CREATE TABLE tipo_movimiento_inventario (
+    id_tipo_movimiento INTEGER AUTO_INCREMENT PRIMARY KEY,
+    tipo_movimiento VARCHAR(50) NOT NULL
+);
+INSERT INTO tipo_movimiento_inventario(tipo_movimiento) VALUES ('Entrada');   -- compra de proveedor
+INSERT INTO tipo_movimiento_inventario(tipo_movimiento) VALUES ('Salida');    -- venta / ensamblaje
+INSERT INTO tipo_movimiento_inventario(tipo_movimiento) VALUES ('Ajuste');    -- corrección manual
+
+CREATE TABLE movimiento_inventario (
+    id_movimiento INTEGER AUTO_INCREMENT PRIMARY KEY,
+    id_componente INTEGER NOT NULL REFERENCES componente(id_componente),
+    id_tipo_movimiento INTEGER NOT NULL REFERENCES tipo_movimiento_inventario(id_tipo_movimiento),
+
+    cantidad INTEGER NOT NULL, -- positiva o negativa según el tipo
+    fecha TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    id_usuario INTEGER REFERENCES usuario(id_usuario), -- quién hizo el movimiento
+    observacion VARCHAR(255) NULL
+);
+
+
+
 -- - - - - - - - - - - - - - - - - - - - - - - - - - - - - USUARIOS - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 CREATE TABLE tipo_usuario(
     id_tipo_usuario INTEGER AUTO_INCREMENT PRIMARY KEY,
@@ -59,28 +82,46 @@ CREATE TABLE ensamble(
 CREATE TABLE componente_ensamble(
     id_ensamble REFERENCES ensamble(id_ensamble) NOT NULL,
     id_componente REFERENCES componente(id_componente) NOT NULL
-    
+    PRIMARY KEY (id_ensamble, id_componente)
 );
 
 
 
 -- - - - - - - - - - - - - - - - - - - - - - - - - - - REGISTRO DE VENTAS - - - - - - - - - - - - - - - - - - - - - - - - - -
+CREATE TABLE estado_pedido(
+    id_estado_pedido INTEGER AUTO_INCREMENT PRIMARY KEY,
+    estado_pedido VARCHAR(50) NOT NULl
+);
+INSERT INTO estado_pedido(estado_pedido) VALUES ('Pendiente');
+INSERT INTO estado_pedido(estado_pedido) VALUES ('Confirmado');
+INSERT INTO estado_pedido(estado_pedido) VALUES ('Cancelado');
+INSERT INTO estado_pedido(estado_pedido) VALUES ('Completado');
+
 CREATE TABLE pedido(
     id_pedido INTEGER AUTO_INCREMENT PRIMARY KEY,
-
     id_usuario_pedido INTEGER REFERENCES usuario(id_usuario), -- id del usuario que realizó el pedido, puede ser un cliente o un trabajador que realice el pedido por un cliente en una tienda fisica 
-
+    estado_pedido INTEGER NOT NULL REFERENCES estado_pedido(id_estado_pedido)
 );
+
+CREATE TABLE historial_cambios_pedido(
+    id_historial_cambios INTEGER AUTO_INCREMENT PRIMARY KEY, 
+
+    id_pedido INTEGER NOT NULL REFERENCES pedido(id_pedido),
+    estado INTEGER NOT NULL REFERENCES estado_pedido(id_estado_pedido),
+    fecha_cambio_realizado TIMESTAMP NOT NULL
+);
+
 
 CREATE TABLE pedido_detalle( -- un pedido puede tener uno o más ensambles
     id_pedido INTEGER REFERENCES pedido(id_pedido) NOT NULl,
-    id_ensable REFERENCES ensamble(id_ensamble) NOT NULl
+    id_ensable REFERENCES ensamble(id_ensamble) NOT NULl,
+    PRIMARY KEY (id_pedido, id_ensamble)
 );
 
 CREATE TABLE venta(
     id_venta INTEGER PRIMARY KEY AUTO_INCREMENT,
-    id_pedido REFERENCES pedido(id_pedido) NOT NULL,
-    fecha DATE NOT NUTLL,
+    id_pedido REFERENCES pedido(id_pedido) NOT NULL UNIQUE REFERENCES pedido(id_pedido),
+    fecha DATE NOT NULL,
 
     nombre_cliente VARCHAR(100) NOT NULL, -- El pedido pudo haber sido hecho por un tabajador, en ese caso pedir el nombre 
     nit_cliente INTEGER NULL,

@@ -70,3 +70,114 @@ Ejemplo (para subidas):
 ```sh
 chmod -R 755 /home/jorge/Teoría_Sistemas/SupermercadoTS1/uploads
 ```
+
+
+## Instalacion de MariaDB en Solus
+```sh
+sudo eopkg install mariadb
+sudo eopkg install mariadb-devel
+```
+Por defecto, eopkg no crea las carpetas necesarias para MariaDB.
+
+Ejecutar:
+```sh
+sudo mkdir -p /var/lib/mysql
+sudo chown -R mysql:mysql /var/lib/mysql
+```
+
+Luego, inicializar la base de datos manualmente para que se creen los archivos necesarios para MariaDB:
+```sh
+sudo mariadb-install-db --user=mysql --basedir=/usr --datadir=/var/lib/mysql
+```
+
+Ahora podemos iniciar MariaDB manualmente:
+```sh
+sudo mysqld_safe --datadir=/var/lib/mysql &
+```
+y conectarnos al cliente:
+```sh
+mariadb -u root
+```
+
+#### Cambiar la contraseña root
+1. Conectarse directamente como administrador:
+```sh
+sudo mariadb
+```
+2. Cambiar el metodo de autenticacion y contraseña (`12345` como ejemplo):
+```SQL
+ALTER USER 'root'@'localhost' IDENTIFIED VIA mysql_native_password;
+SET PASSWORD = PASSWORD('12345');
+FLUSH PRIVILEGES;
+```
+3. Conectarse a la base de datos con la nueva contraseña:
+```sh
+mariadb -u root -p
+```
+
+## Configuracion del entorno (PHP, Laravel, Vue)
+### Instalacion de PHP
+Instalar PHP desde los repositorios de Solus
+```sh
+sudo eopkg install php
+```
+Instalar Composer (gestor de dependencias de PHP):
+```sh
+sudo eopkg install composer
+```
+
+#### Creando un proyecto con Laravel
+Laravel se descargará e instalará cuando sea llamado por composer:
+```sh
+composer create-project laravel/laravel venta_computadoras
+cd venta_computadoras
+```
+#### Ejecutar el servidor de Laravel: 
+```sh
+php artisan serve
+```
+Laravel devolverá un mensaje indicando la URL donde podremos acceder al servidor: 
+```sh
+Laravel development server started: http://127.0.0.1:8000
+```
+
+### Instalacion de Node y NPM
+Utilizando el gestor de paquetes de Solus:
+```sh
+sudo eopkg install nodejs
+sudo eopkg install npm
+```
+### Instalar Vue dentro de Larabel
+ejecutar dentro del proyecto de Larabel:
+```
+npm install
+npm install vue@3
+npm install @vitejs/plugin-vue --save-dev
+```
+
+#### Registrar vue
+En el archivo `resources/js/app.js` registrar vue, allí también van los imports:
+
+```js
+import { createApp } from 'vue';
+import Producto from './Componentes/Producto.vue';
+
+const app = createApp({});
+app.component('producto', Producto);
+app.mount('#app');
+
+```
+
+
+## Ejecucion
+```sh
+npm run dev   # Para desarrollo, compila el javascript 
+php artisan serve  # Para levantar el servidor de Laravel
+```
+
+
+
+
+
+
+

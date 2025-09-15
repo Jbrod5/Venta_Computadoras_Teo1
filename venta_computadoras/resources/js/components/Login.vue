@@ -61,29 +61,20 @@ export default {
 
 
 
-        let data = await response.json()
-
+        let data = await response.json();
 
         if (!response.ok) {
-          // Aquí usamos el mensaje que envía Laravel
           throw new Error(data.error || 'Error desconocido');
         }
-
-        //Guardar el tipo de usuario y el nombre :3
+        
+        // Guardar info del usuario
         localStorage.setItem('tipo_usuario', data.tipo_usuario);
         localStorage.setItem('user', data.user);
-        alert(`Bienvenido ${data.user}`)
+        alert(`Bienvenido ${data.user}`);
+        
+        // Redirigir usando la URL que viene del backend
+        window.location.href = data.redirect;
 
-
-
-        // Redirigir a la pagina que corresponda :3
-        if (parseInt(data.tipo_usuario) === 1) {
-          window.location.href = '/admin';
-        } else if (parseInt(data.tipo_usuario) === 2) {
-          window.location.href = '/tecnico';
-        } else {
-          window.location.href = '/cliente';
-        }
 
 
 

@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Usuario;
+use Illuminate\Support\Facades\Auth;
+
 
 class LoginController extends Controller
 {
@@ -25,9 +27,17 @@ class LoginController extends Controller
             return response()->json(['error' => 'Contraseña incorrecta >:c'], 401);
         }
 
+        //Si llego hasta aquí todo está bien :3
+
+        // Iniciar sesión
+        Auth::login($usuario);
+
         return response()->json([
+            'success' => true,
             'user' => $usuario->nombre,
-            'tipo_usuario' => $usuario->id_tipo_usuario
+            'tipo_usuario' => $usuario->id_tipo_usuario,
+            'redirect' => url('/usuarios') // Vue puede leer esta URL y redirigir
         ]);
+
     }
 }

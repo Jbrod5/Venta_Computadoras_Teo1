@@ -6,6 +6,9 @@ import { createApp, h } from 'vue';
 import Login from './components/Login.vue'
 import Register from './components/RegisterClients.vue'
 
+
+
+
 const components = {
     'login': Login,
     'register-clients' : Register,

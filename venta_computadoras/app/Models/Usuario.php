@@ -3,12 +3,15 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 
-class Usuario extends Model
+class Usuario extends Authenticatable
 {
     protected $table = 'usuario';   // Nombre de la tabla
     protected $primaryKey = 'id_usuario'; // Clave primaria
-
+    public $timestamps = false; 
+    
     // Campos que se pueden llenar masivamente
     protected $fillable = [
         'id_tipo_usuario',
@@ -19,5 +22,16 @@ class Usuario extends Model
         'telefono'
     ];
 
-    public $timestamps = false; 
+    // Relación con tipo_usuario
+    public function tipo()
+    {
+        return $this->belongsTo(TipoUsuario::class, 'id_tipo_usuario', 'id_tipo_usuario');
+    }
+
+    public function getAuthPassword()
+    {
+        return $this->pass;
+    }
+
+    
 }

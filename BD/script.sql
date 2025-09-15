@@ -20,6 +20,9 @@ CREATE TABLE usuario(
     nombre VARCHAR(200) NOT NULL, 
     correo VARCHAR(200) NOT NULL UNIQUE,
     pass VARCHAR(200) NOT NULL,
+
+    direccion VARCHAR (300) NOT NULL, 
+    telefono INT NOT NULL,
     FOREIGN KEY (id_tipo_usuario) REFERENCES tipo_usuario(id_tipo_usuario)
 );
 
@@ -146,3 +149,12 @@ CREATE TABLE venta(
     FOREIGN KEY (id_pedido) REFERENCES pedido(id_pedido),
     FOREIGN KEY (id_usuario_ensamblador) REFERENCES usuario(id_usuario)
 );
+
+
+
+
+
+
+
+-- Inserciones iniciales
+INSERT INTO usuario(id_tipo_usuario, nombre, correo, pass, direccion, telefono) VALUES (1, 'Pedro Soto', 'pedroadmin@gmail.com', '12345', 'Dir admin', 12345678);

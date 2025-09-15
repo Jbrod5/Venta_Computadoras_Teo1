@@ -148,11 +148,16 @@ sudo eopkg install nodejs
 sudo eopkg install npm
 ```
 ### Instalar Vue dentro de Larabel
-ejecutar dentro del proyecto de Larabel:
+Instalar el plugin de Vue para Vite:
+```sh
+npm install @vitejs/plugin-vue --save-dev
 ```
+
+ejecutar dentro del proyecto de Larabel:
+```sh
 npm install
 npm install vue@3
-npm install @vitejs/plugin-vue --save-dev
+npm install @vitejs/plugin-vue --save-dev #Esta es la linea de instalacion de vue
 ```
 
 #### Registrar vue
@@ -168,6 +173,31 @@ app.mount('#app');
 
 ```
 
+Y en vite.config.js debe haber algo como esto: 
+
+```js
+import { defineConfig } from 'vite';
+import laravel from 'laravel-vite-plugin';
+import tailwindcss from '@tailwindcss/vite';
+import vue from '@vitejs/plugin-vue'
+
+export default defineConfig({
+    plugins: [
+        laravel({
+            input: ['resources/css/app.css', 'resources/js/app.js'],
+            refresh: true,
+        }),
+        tailwindcss(),
+        vue(),
+    ],
+    resolve: {
+    alias: {
+      '@': '/resources/js',
+    },
+  },
+});
+```
+
 
 ## Ejecucion
 ```sh
@@ -177,6 +207,13 @@ php artisan serve  # Para levantar el servidor de Laravel
 
 
 
+
+
+
+# Creacion de controladores
+```sh
+php artisan make:controller LoginController
+```
 
 
 

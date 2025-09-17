@@ -26,4 +26,14 @@ class Componente extends Model
     {
         return $this->belongsTo(TipoComponente::class, 'id_tipo_componente');
     }
+
+     public function ensambles()
+    {
+        return $this->belongsToMany(Ensamble::class, 'componente_ensamble', 'id_componente', 'id_ensamble');
+    }
+    public function tipoComponente()
+{
+    return $this->belongsTo(TipoComponente::class, 'id_tipo_componente');
+}
+
 }

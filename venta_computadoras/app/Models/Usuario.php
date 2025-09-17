@@ -33,5 +33,10 @@ class Usuario extends Authenticatable
         return $this->pass;
     }
 
+    public function ensamblesCreados()
+    {
+        return $this->hasMany(Ensamble::class, 'id_usuario_creador');
+    }
+
     
 }

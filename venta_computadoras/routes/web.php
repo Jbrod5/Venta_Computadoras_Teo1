@@ -6,7 +6,8 @@ use App\Http\Controllers\RegistroController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\InventarioController;
-use App\Http\Controllers\EnsambleController;
+
+use App\Http\Controllers\Admin\EnsambleController;
 use App\Http\Controllers\PedidoController;
 use App\Http\Controllers\ReporteController;
 use App\Http\Controllers\CarritoController;
@@ -62,6 +63,15 @@ Route::middleware(['auth','role:admin'])->group(function(){
     Route::post('/admin/inventario/{id}/movimiento', [InventarioController::class, 'registrarMovimiento'])->name('inventario.registrarMovimiento');
     //Route::get('/admin/movimiento', [MovimientoInventarioController::class, 'create'])->name('movimiento.create');
     //Route::post('/admin/movimiento', [MovimientoInventarioController::class, 'store'])->name('movimiento.store');
+
+
+    //Ensambles - - - - - - - - - --  -- - - - - - 
+    Route::get ('/ensambles/create', [EnsambleController::class, 'create'])->name('ensambles.create');
+    Route::post('/ensambles/store', [EnsambleController::class, 'store'])->name('ensambles.store');
+    Route::get ('/ensambles/{ensamble}', [EnsambleController::class, 'show'])->name('ensambles.show');
+    Route::get ('/ensambles/{ensamble}/edit', [EnsambleController::class, 'edit'])->name('ensambles.edit');
+    Route::put ('/ensambles/{ensamble}', [EnsambleController::class, 'update'])->name('ensambles.update');
+
 });
 
 // Técnico

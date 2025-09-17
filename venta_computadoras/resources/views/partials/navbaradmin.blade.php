@@ -33,7 +33,10 @@
         </li>
 
         <li class="nav-item">
-          <a class="nav-link" href="#">Ensambles</a>
+          <a class="nav-link {{ request()->routeIs('ensambles.*') ? 'active' : '' }}"
+               href="{{ route('ensambles.index') }}">
+                Ensambles
+            </a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="#">Pedidos</a>

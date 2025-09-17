@@ -5,14 +5,20 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
+use App\Models\Pedido;  
+use App\Models\Venta;
+use App\Models\Usuario;
+
+
 class AdminController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+     public function index()
     {
-        //
+        // Retorna la vista Blade del dashboard :3
+        //return view('admin.dashboard'); // Asegúrate de que el archivo está en resources/views/admin/dashboard.blade.php
     }
 
     /**

@@ -1,7 +1,7 @@
 <template>
   <div class="d-flex justify-content-center align-items-center vh-100 bg-light">
     <div class="card p-4 shadow" style="width: 400px;">
-      <h2 class="card-title text-center mb-4">Registrarse como Cliente</h2>
+      <h2 class="card-title text-center mb-4">Registrate como Cliente</h2>
 
       <form @submit.prevent="register">
         <div class="mb-3">
@@ -34,7 +34,15 @@
 
       <p v-if="error" class="text-danger mt-3 text-center">{{ error }}</p>
       <p v-if="success" class="text-success mt-3 text-center">{{ success }}</p>
+    
+    <p class="text-center mt-3">
+        ¿O ya tienes una cuenta?
+        <br>
+        <a href="/">Inicia sesión</a>
+      </p>
     </div>
+
+      
   </div>
 </template>
 
@@ -79,6 +87,11 @@ export default {
 
         this.success = 'Registro completo!! :3'
         this.error = ''
+
+        alert('Registro satisfactorio ' + data.user + '!! Ahora puedes iniciar sesion' )
+
+        //Redirigir al login 
+        window.location.href = data.redirect;
       } catch (err) {
         this.error = err.message
         this.success = ''

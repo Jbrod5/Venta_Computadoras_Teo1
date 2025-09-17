@@ -31,7 +31,9 @@ class RegistroController extends Controller
 
         return response()->json([
             'message' => 'Usuario registrado correctamente',
-            'user' => $usuario->nombre
+            'user' => $usuario->nombre,
+            'redirect' => url('/') //Redirigir al login :3
+
         ]);
     }
 }

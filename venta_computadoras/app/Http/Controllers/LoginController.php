@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 use App\Models\Usuario;
 use Illuminate\Support\Facades\Auth;
 
-
 class LoginController extends Controller
 {
     public function login(Request $request)
@@ -14,30 +13,28 @@ class LoginController extends Controller
         $email = $request->input('email');
         $password = $request->input('password');
 
-        // Buscar usuario por correo
-        //Esta es la consulta a la base de datos :3
+        // Buscar usuario
         $usuario = Usuario::where('correo', $email)->first();
 
         if (!$usuario) {
-            return response()->json(['error' => 'Correo no registrado'], 401);
+            return back()->withErrors(['email' => 'Correo no registrado']);
         }
 
-        // Comparar contraseñas (por ahora en texto plano)
+        // Contraseña en texto plano por ahora
         if ($usuario->pass !== $password) {
-            return response()->json(['error' => 'Contraseña incorrecta >:c'], 401);
+            return back()->withErrors(['password' => 'Contraseña incorrecta']);
         }
 
-        //Si llego hasta aquí todo está bien :3
-
-        // Iniciar sesión
+        // Iniciar sesión con Laravel Auth
         Auth::login($usuario);
 
-        return response()->json([
-            'success' => true,
-            'user' => $usuario->nombre,
-            'tipo_usuario' => $usuario->id_tipo_usuario,
-            'redirect' => url('/usuarios') // Vue puede leer esta URL y redirigir
-        ]);
-
+        // Redirigir según rol
+        if ($usuario->id_tipo_usuario == 1) {
+            return redirect('/admin');
+        } elseif ($usuario->id_tipo_usuario == 2) {
+            return redirect('/tecnico');
+        } else {
+            return redirect('/catalogo');
+        }
     }
 }

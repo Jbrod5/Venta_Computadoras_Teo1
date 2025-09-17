@@ -199,12 +199,28 @@ export default defineConfig({
 ```
 
 
+
+
+
+
 ## Ejecucion
+
+### MariaDB
+Iniciar el servicio
+```sh
+sudo systemctl start mariadb
+```
+
+### Laravel y Vue
 ```sh
 npm run dev   # Para desarrollo, compila el javascript 
 php artisan serve  # Para levantar el servidor de Laravel
 ```
 
+## Dependencias para python
+```sh
+sudo pip install faker mysql-connector-python
+```
 
 
 

@@ -13,7 +13,7 @@ class UsuariosAdminController extends Controller
     public function index()
     {
         $usuarios = Usuario::with('tipo')->get();
-        return view('admin.usuarios.index', compact('usuarios'));
+        return view('admin.usuarios.iniciousuarios', compact('usuarios'));
     }
 
     // Formulario para crear usuario

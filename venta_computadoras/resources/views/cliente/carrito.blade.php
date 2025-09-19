@@ -22,7 +22,8 @@
     @if(session('carrito') && (count(session('carrito')['componente'] ?? []) > 0 || count(session('carrito')['ensamble'] ?? []) > 0))
         <div class="row">
             <div class="col-12">
-                <!-- Tabla de Componentes -->
+
+                {{-- Tabla de Componentes --}}
                 @if(session('carrito')['componente'] ?? false)
                 <h4>Componentes</h4>
                 <table class="table table-bordered table-striped">
@@ -60,14 +61,14 @@
                 </table>
                 @endif
 
-                <!-- Tabla de Ensambles -->
+                {{-- Tabla de Ensambles --}}
                 @if(session('carrito')['ensamble'] ?? false)
                 <h4 class="mt-4">Ensambles</h4>
                 <table class="table table-bordered table-striped">
                     <thead class="table-dark">
                         <tr>
-                            <th>Nombre</th>
-                            <th>Precio</th>
+                            <th>Nombre / Componentes</th>
+                            <th>Precio Total Ensamble</th>
                             <th>Cantidad</th>
                             <th>Subtotal</th>
                             <th>Acciones</th>
@@ -76,7 +77,16 @@
                     <tbody>
                         @foreach(session('carrito')['ensamble'] as $id => $item)
                         <tr>
-                            <td>{{ $item['nombre'] }}</td>
+                            <td>
+                                <strong>{{ $item['nombre'] }}</strong>
+                                @if(!empty($item['componentes']))
+                                    <ul class="mt-2">
+                                        @foreach($item['componentes'] as $comp)
+                                            <li>{{ $comp['nombre'] }} - Q{{ number_format($comp['precio'], 2) }}</li>
+                                        @endforeach
+                                    </ul>
+                                @endif
+                            </td>
                             <td>Q{{ number_format($item['precio'], 2) }}</td>
                             <td>
                                 <form action="{{ route('carrito.actualizar.ensamble', $id) }}" method="POST" class="d-flex">
@@ -98,7 +108,7 @@
                 </table>
                 @endif
 
-                <!-- Total -->
+                {{-- Total --}}
                 @php
                     $total = 0;
                     foreach(session('carrito')['componente'] ?? [] as $item) {

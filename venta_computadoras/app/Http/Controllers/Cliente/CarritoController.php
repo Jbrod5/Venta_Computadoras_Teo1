@@ -51,23 +51,37 @@ class CarritoController extends Controller
 
 public function agregarEnsamble($id)
 {
-    $ensamble = Ensamble::findOrFail($id);
+    $ensamble = Ensamble::with('componentes')->findOrFail($id);
 
     $carrito = session()->get('carrito', []);
     if(isset($carrito['ensamble'][$id])) {
         $carrito['ensamble'][$id]['cantidad']++;
     } else {
+        // Calcula el monto sumando componentes
+        $precioTotal = 0;
+        $componentes = [];
+        foreach ($ensamble->componentes as $comp) {
+            $precioTotal += $comp->precio;
+            $componentes[] = [
+                'id' => $comp->id_componente,
+                'nombre' => $comp->nombre,
+                'precio' => $comp->precio,
+            ];
+        }
+
         $carrito['ensamble'][$id] = [
-            'id' => $ensamble->id_ensamble, // <- agrega esto
+            'id' => $ensamble->id_ensamble,
             'nombre' => 'Ensamble #' . $ensamble->id_ensamble,
-            'precio' => $ensamble->monto ?? 0,
-            'cantidad' => 1
+            'precio' => $precioTotal, // <- ahora calculado dinámicamente
+            'cantidad' => 1,
+            'componentes' => $componentes // <- guardamos los detalles
         ];
     }
     session()->put('carrito', $carrito);
 
     return redirect()->back()->with('success', 'Ensamble agregado al carrito!');
 }
+
 
 
 // Actualizar cantidad de componente

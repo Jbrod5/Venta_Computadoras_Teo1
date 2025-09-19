@@ -10,6 +10,14 @@ class Venta extends Model
     protected $primaryKey = 'id_venta';
     public $timestamps = false;
 
+     protected $fillable = [
+        'id_pedido',
+        'fecha',
+        'nombre_cliente',
+        'id_usuario_ensamblador',
+        'monto',
+    ];
+
     // Relación con Usuario (Ensamblador)
     public function usuarioEnsamblador()
     {
@@ -20,5 +28,9 @@ class Venta extends Model
     public function pedido()
     {
         return $this->hasOne(Pedido::class, 'id_pedido');
+    }
+
+    public function cliente() {
+    return $this->belongsTo(User::class, 'id_usuario_ensamblador');
     }
 }

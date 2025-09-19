@@ -1,10 +1,10 @@
-@extends('layouts.admin')
+@extends('layouts.cliente')
 
 @section('content')
 <div class="container mt-4">
     <h2 class="mb-4">Crear Ensamble</h2>
 
-    <form id="ensambleForm" action="{{ route('ensambles.store') }}" method="POST">
+    <form id="ensambleForm" action="{{ route('cliente.ensambles.store') }}" method="POST">
         @csrf
 
         @php
@@ -33,8 +33,6 @@
                                         @if($componente->capacidad)
                                             Capacidad: {{ $componente->capacidad }}
                                         @endif
-                                        <br>
-                                        Stock: {{ $componente->cantidad_stock }}
                                     </div>
                                 </label>
                             </div>
@@ -46,7 +44,7 @@
 
         <div class="mt-4">
             <button type="submit" class="btn btn-primary me-2">Crear Ensamble</button>
-            <a href="{{ route('ensambles.index') }}" class="btn btn-secondary">Cancelar</a>
+            <a href="{{ route('cliente.ensambles.index') }}" class="btn btn-secondary">Cancelar</a>
         </div>
     </form>
 </div>

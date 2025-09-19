@@ -21,6 +21,9 @@ use App\Http\Controllers\Cliente\CarritoController;
 use App\Http\Controllers\Cliente\ComponentesEnsamblesController;
 //use App\Http\Controllers\Admin\AdminController;
 
+
+use App\Http\Controllers\Cliente\PedidosController;
+
 // Login
 Route::get('/', function () {
     return view('welcome');
@@ -95,11 +98,11 @@ Route::middleware(['auth','role:cliente'])->group(function(){
     Route::post('/carrito/agregar/componente/{id}', [CarritoController::class, 'agregarComponente'])->name('carrito.agregar.componente');
     Route::post('/carrito/agregar/ensamble/{id}', [CarritoController::class, 'agregarEnsamble'])->name('carrito.agregar.ensamble');
 
-    Route::get('/mispedidos', [ClienteController::class, 'index']) ->name('cliente.pedidos');
+    Route::get('/mispedidos', [PedidosController::class, 'index']) ->name('cliente.pedidos');
 
 
     Route::post('carrito/agregar', [CarritoController::class, 'agregar']);
-    Route::post('carrito/confirmar', [CarritoController::class, 'confirmar']);
+    //Route::post('carrito/confirmar', [CarritoController::class, 'confirmar']);
     Route::get('perfil', [PerfilController::class, 'index']);
 
 
@@ -119,8 +122,15 @@ Route::middleware(['auth','role:cliente'])->group(function(){
 
     //Ensambles:
     Route::get('/ensambles', [ComponentesEnsamblesController::class, 'index'])->name('cliente.ensambles.index');
+
     Route::get('/ensambles/crear', [ComponentesEnsamblesController::class, 'create'])->name('cliente.ensambles.create');
+Route::post('/ensambles', [ComponentesEnsamblesController::class, 'store'])->name('cliente.ensambles.store');
+
 });
+Route::prefix('cliente')->middleware('auth')->group(function () {
+    Route::post('/carrito/confirmar', [CarritoController::class, 'confirmarCompra'])->name('carrito.confirmar');
+});
+
 
 
 use Illuminate\Support\Facades\Auth;

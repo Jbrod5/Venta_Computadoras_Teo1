@@ -8,10 +8,17 @@ use App\Http\Controllers\Controller;
 use App\Models\Componente;
 use App\Models\Ensamble;
 use App\Models\TipoComponente;
+use App\Models\EstadoPedido;
 use App\Models\Pedido;
-
+use App\Models\PedidoDetalle;
+use App\Models\HistorialCambiosPedido;
+use App\Models\Venta;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+
+
 
 class CarritoController extends Controller
 {
@@ -30,10 +37,12 @@ class CarritoController extends Controller
         $carrito['componente'][$id]['cantidad']++;
     } else {
         $carrito['componente'][$id] = [
+            'id' => $componente->id_componente,
             'nombre' => $componente->nombre,
             'precio' => $componente->precio,
             'cantidad' => 1
         ];
+
     }
     session()->put('carrito', $carrito);
 
@@ -49,8 +58,9 @@ public function agregarEnsamble($id)
         $carrito['ensamble'][$id]['cantidad']++;
     } else {
         $carrito['ensamble'][$id] = [
-            'nombre' => 'Ensamble #' . $ensamble->id_ensamble, // O cualquier info que quieras
-            'precio' => $ensamble->monto ?? 0, // si tienes precio
+            'id' => $ensamble->id_ensamble, // <- agrega esto
+            'nombre' => 'Ensamble #' . $ensamble->id_ensamble,
+            'precio' => $ensamble->monto ?? 0,
             'cantidad' => 1
         ];
     }
@@ -110,6 +120,87 @@ public function eliminarEnsamble($id)
         return redirect()->back()->with('success', 'Ensamble eliminado.');
     }
     return redirect()->back()->with('error', 'Ensamble no encontrado en el carrito.');
+}
+
+
+public function confirmarCompra(Request $request)
+{
+    $carrito = session()->get('carrito', []);
+
+    if(empty($carrito['componente']) && empty($carrito['ensamble'])) {
+        return redirect()->back()->with('error', 'El carrito está vacío.');
+    }
+
+    DB::transaction(function() use ($carrito) {
+
+        $pedido = Pedido::create([
+            'id_usuario_pedido' => Auth::id(), 
+            'id_estado_pedido' => EstadoPedido::where('estado_pedido', 'Pendiente')->first()->id_estado_pedido,
+        ]);
+
+        // --- Componentes individuales ---
+        foreach($carrito['componente'] ?? [] as $item) {
+            PedidoDetalle::create([
+                'id_pedido' => $pedido->id_pedido,
+                'id_componente' => $item['id'], // <- ahora sí seguro
+                'cantidad' => $item['cantidad'],
+                'id_ensamble' => null,
+            ]);
+        
+            $componente = Componente::find($item['id']);
+            if($componente) {
+                $componente->cantidad_stock -= $item['cantidad'];
+                $componente->save();
+            }
+        }
+
+
+        // --- Ensambles ---
+        foreach($carrito['ensamble'] ?? [] as $item) {
+            PedidoDetalle::create([
+                'id_pedido' => $pedido->id_pedido,
+                'id_ensamble' => $item['id'], // <- ahora sí seguro
+                'cantidad' => $item['cantidad'],
+                'id_componente' => null,
+            ]);
+        
+            $ensamble = Ensamble::find($item['id']);
+            if($ensamble) {
+                foreach($ensamble->componentes as $comp) {
+                    $comp->cantidad_stock -= $item['cantidad'];
+                    $comp->save();
+                }
+            }
+        }
+
+
+        // Historial de cambios
+        HistorialCambiosPedido::create([
+            'id_pedido' => $pedido->id_pedido,
+            'id_estado_pedido' => $pedido->id_estado_pedido,
+        ]);
+
+        // Crear venta
+        $total = 0;
+        foreach($carrito['componente'] ?? [] as $item) {
+            $total += $item['precio'] * $item['cantidad'];
+        }
+        foreach($carrito['ensamble'] ?? [] as $item) {
+            $total += $item['precio'] * $item['cantidad'];
+        }
+
+        Venta::create([
+            'id_pedido' => $pedido->id_pedido,
+            'fecha' => now(),
+            'nombre_cliente' => Auth::user()->nombre,
+            'id_usuario_ensamblador' => Auth::id(),
+            'monto' => $total,
+        ]);
+    });
+
+    session()->forget('carrito');
+
+    return redirect()->route('carrito.index')->with('success', 'Compra solicitada exitosamente. Su pedido se encuentra pendiente.');
 }
 
 

@@ -129,13 +129,18 @@ CREATE TABLE historial_cambios_pedido(
     FOREIGN KEY (id_estado_pedido) REFERENCES estado_pedido(id_estado_pedido)
 );
 
-CREATE TABLE pedido_detalle(
+CREATE TABLE pedido_detalle( -- Permitir la venta de ensambles o componentes individualmente :3
+    id_detalle INT AUTO_INCREMENT PRIMARY KEY,
     id_pedido INT NOT NULL,
-    id_ensamble INT NOT NULL,
-    PRIMARY KEY (id_pedido, id_ensamble),
+    id_ensamble INT NULL,
+    id_componente INT NULL,
+    cantidad INT NOT NULL DEFAULT 1,
     FOREIGN KEY (id_pedido) REFERENCES pedido(id_pedido),
-    FOREIGN KEY (id_ensamble) REFERENCES ensamble(id_ensamble)
+    FOREIGN KEY (id_ensamble) REFERENCES ensamble(id_ensamble),
+    FOREIGN KEY (id_componente) REFERENCES componente(id_componente)
 );
+;
+
 
 CREATE TABLE venta(
     id_venta INT AUTO_INCREMENT PRIMARY KEY,
@@ -157,4 +162,7 @@ CREATE TABLE venta(
 
 
 -- Inserciones iniciales
+-- Admin
 INSERT INTO usuario(id_tipo_usuario, nombre, correo, pass, direccion, telefono) VALUES (1, 'Pedro Soto', 'pedroadmin@gmail.com', '12345', 'Dir admin', 12345678);
+-- Cliente
+INSERT INTO usuario(id_tipo_usuario, nombre, correo, pass, direccion, telefono) VALUES (3, 'Cliente Prueba', 'cliente@gmail.com', '54321', 'Dir cliente', 989848);

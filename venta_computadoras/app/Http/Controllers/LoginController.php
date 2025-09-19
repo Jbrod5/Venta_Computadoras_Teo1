@@ -34,7 +34,7 @@ class LoginController extends Controller
         } elseif ($usuario->id_tipo_usuario == 2) {
             return redirect('/tecnico');
         } else {
-            return redirect('/catalogo');
+            return redirect('/inicio');
         }
     }
 }

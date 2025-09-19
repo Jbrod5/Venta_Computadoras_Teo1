@@ -110,6 +110,15 @@ public function update(Request $request, $id)
 }
 
 
+public function destroy($id)
+{
+    $ensamble = Ensamble::findOrFail($id);
+    $ensamble->delete();
+
+    return redirect()->route('admin.ensambles.index')->with('success', 'Ensamble eliminado correctamente.');
+}
+
+
 
 
 

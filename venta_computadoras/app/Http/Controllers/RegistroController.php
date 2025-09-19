@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Usuario;
-use Illuminate\Support\Facades\Hash;
+use App\Helpers\Encriptador; 
 
 class RegistroController extends Controller
 {
@@ -19,11 +19,14 @@ class RegistroController extends Controller
             'telefono' => 'required|numeric',
         ]);
 
+        // Encriptar la contraseña con el método definido
+        $passEncriptada = Encriptador::encriptar($request->correo, $request->pass);
+
         // Crear usuario como cliente
         $usuario = Usuario::create([
             'nombre' => $request->nombre,
             'correo' => $request->correo,
-            'pass' => $request->pass, // encriptar contraseña
+            'pass' => $passEncriptada, 
             'direccion'=> $request->direccion, 
             'telefono' => $request->telefono,
             'id_tipo_usuario' => 3 // El cliente es tipo 3
@@ -32,8 +35,7 @@ class RegistroController extends Controller
         return response()->json([
             'message' => 'Usuario registrado correctamente',
             'user' => $usuario->nombre,
-            'redirect' => url('/') //Redirigir al login :3
-
+            'redirect' => url('/') // Redirigir al login :3
         ]);
     }
 }

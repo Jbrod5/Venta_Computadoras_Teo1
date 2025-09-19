@@ -44,5 +44,9 @@ public function detalles() {
 public function ventas() {
     return $this->hasOne(Venta::class, 'id_pedido');
 }
+public function estadoPedido()
+    {
+        return $this->belongsTo(EstadoPedido::class, 'id_estado_pedido', 'id_estado_pedido');
+    }
 
 }

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Usuario;
 use App\Models\TipoUsuario;
+use App\Helpers\Encriptador; 
 
 class UsuariosAdminController extends Controller
 {
@@ -38,7 +39,7 @@ class UsuariosAdminController extends Controller
         Usuario::create([
             'nombre' => $request->nombre,
             'correo' => $request->correo,
-            'pass' => $request->pass, // Texto plano (como pediste)
+            'pass' => Encriptador::encriptar($request->correo, $request->pass),
             'direccion' => $request->direccion,
             'telefono' => $request->telefono,
             'id_tipo_usuario' => $request->id_tipo_usuario
@@ -71,14 +72,20 @@ class UsuariosAdminController extends Controller
             'id_tipo_usuario' => 'required|exists:tipo_usuario,id_tipo_usuario'
         ]);
 
-        $usuario->update([
+        $datos = [
             'nombre' => $request->nombre,
             'correo' => $request->correo,
             'direccion' => $request->direccion,
             'telefono' => $request->telefono,
             'id_tipo_usuario' => $request->id_tipo_usuario,
-            'pass' => $request->pass ?? $usuario->pass, // Si se envía pass, se actualiza
-        ]);
+        ];
+
+        // Solo si se envía una nueva contraseña, se encripta y se guarda
+        if (!empty($request->pass)) {
+            $datos['pass'] = Encriptador::encriptar($request->correo, $request->pass);
+        }
+
+        $usuario->update($datos);
 
         return redirect()->route('usuarios.index')->with('success', 'Usuario actualizado correctamente.');
     }

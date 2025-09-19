@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Usuario;
 use Illuminate\Support\Facades\Auth;
+use App\Helpers\Encriptador; 
 
 class LoginController extends Controller
 {
@@ -20,8 +21,11 @@ class LoginController extends Controller
             return back()->withErrors(['email' => 'Correo no registrado']);
         }
 
-        // Contraseña en texto plano por ahora
-        if ($usuario->pass !== $password) {
+        // Generamos la contraseña encriptada con el mismo método que usaste al guardar
+        $passwordEncriptada = Encriptador::encriptar($email, $password);
+
+        // Comparar
+        if ($usuario->pass !== $passwordEncriptada) {
             return back()->withErrors(['password' => 'Contraseña incorrecta']);
         }
 

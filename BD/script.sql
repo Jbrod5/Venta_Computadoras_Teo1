@@ -19,7 +19,7 @@ CREATE TABLE usuario(
     
     nombre VARCHAR(200) NOT NULL, 
     correo VARCHAR(200) NOT NULL UNIQUE,
-    pass VARCHAR(200) NOT NULL,
+    pass VARCHAR(250) NOT NULL,
 
     direccion VARCHAR (300) NOT NULL, 
     telefono INT NOT NULL,
@@ -161,8 +161,9 @@ CREATE TABLE venta(
 
 
 
+
 -- Inserciones iniciales
 -- Admin
-INSERT INTO usuario(id_tipo_usuario, nombre, correo, pass, direccion, telefono) VALUES (1, 'Pedro Soto', 'pedroadmin@gmail.com', '12345', 'Dir admin', 12345678);
+-- INSERT INTO usuario(id_tipo_usuario, nombre, correo, pass, direccion, telefono) VALUES (1, 'Pedro Soto', 'pedroadmin@gmail.com', '12345', 'Dir admin', 12345678);
 -- Cliente
-INSERT INTO usuario(id_tipo_usuario, nombre, correo, pass, direccion, telefono) VALUES (3, 'Cliente Prueba', 'cliente@gmail.com', '54321', 'Dir cliente', 989848);
+-- INSERT INTO usuario(id_tipo_usuario, nombre, correo, pass, direccion, telefono) VALUES (3, 'Cliente Prueba', 'cliente@gmail.com', '12345', 'Dir cliente', 989848);

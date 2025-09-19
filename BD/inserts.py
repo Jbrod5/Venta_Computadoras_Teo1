@@ -2,6 +2,21 @@ import mysql.connector
 from faker import Faker
 import random
 from datetime import datetime, timedelta
+import base64
+
+def encriptar(correo: str, contrasena: str) -> str:
+    """
+    Encripta la contraseña usando el mismo algoritmo que en PHP:
+    string = correo + "salttt" + contrasena
+    luego se aplica base64
+    """
+    combinado = f"{correo}salttt{contrasena}"
+    # Convertir a bytes y luego aplicar base64
+    combinado_bytes = combinado.encode('utf-8')
+    encriptado_bytes = base64.b64encode(combinado_bytes)
+    # Devolver como string
+    return encriptado_bytes.decode('utf-8')
+
 
 # Configuración de conexión a MariaDB
 db = mysql.connector.connect(
@@ -19,21 +34,45 @@ tipos_usuario = [("Administrador",), ("Tecnico",), ("Cliente",)]
 cursor.executemany("INSERT IGNORE INTO tipo_usuario (tipo_usuario) VALUES (%s)", tipos_usuario)
 db.commit()
 
+# ----- Insertar usuarios especiales -----
+usuarios_especiales = [
+    (1, "Pedro Soto", "pedroadmin@gmail.com", "12345", "Dir admin", 12345678),
+    (3, "Cliente Prueba", "cliente@gmail.com", "12345", "Dir cliente", 989848)
+]
+
+usuarios_encriptados = []
+for tipo, nombre, correo, password, direccion, telefono in usuarios_especiales:
+    pass_encriptada = encriptar(correo, password)
+    usuarios_encriptados.append((tipo, nombre, correo, pass_encriptada, direccion, telefono))
+
+cursor.executemany(
+    "INSERT INTO usuario (id_tipo_usuario, nombre, correo, pass, direccion, telefono) VALUES (%s,%s,%s,%s,%s,%s)",
+    usuarios_encriptados
+)
+db.commit()
+
+
 usuarios = []
 for _ in range(10):
     tipo = random.choice([1, 2, 3])
     nombre = fake.name()
     correo = fake.unique.email()
     password = "12345"
+
+    # Encriptar la contraseña usando tu algoritmo
+    password_encriptada = encriptar(correo, password)
+
     direccion = fake.address().replace("\n", ", ")
     telefono = random.randint(30000000, 39999999)
-    usuarios.append((tipo, nombre, correo, password, direccion, telefono))
+
+    usuarios.append((tipo, nombre, correo, password_encriptada, direccion, telefono))
 
 cursor.executemany(
     "INSERT INTO usuario (id_tipo_usuario, nombre, correo, pass, direccion, telefono) VALUES (%s,%s,%s,%s,%s,%s)",
     usuarios
 )
 db.commit()
+
 
 # ----- Generar componentes -----
 tipos_componente = [("Procesador",), ("Memoria RAM",), ("Almacenamiento",), ("Fuente de poder",), ("Gabinete",), ("Motherboard",)]
